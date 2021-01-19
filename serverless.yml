@@ -1,0 +1,40 @@
+
+
+service: aws-node-eventbridge-serverless
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - events:PutEvents
+      Resource: "*"
+
+
+functions:
+  transactions:
+    handler: handler.transactions
+    memorySize: 128
+    events:
+      - eventBridge:
+          eventBus: transactions
+          pattern:
+            source:
+              - acme.transactions.*
+
+  xyzTransactions:
+    handler: handler.xyz
+    memorySize: 128
+    events:
+      - eventBridge:
+          eventBus: transactions
+          pattern:
+            source:
+              - acme.transactions.*
+
+  sendTransaction:
+    handler: handler.send
