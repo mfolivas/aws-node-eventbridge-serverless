@@ -2,20 +2,26 @@ const AWS = require('aws-sdk')
 
 module.exports.sedTransaction = async () => {
     const eventBridge = new AWS.EventBridge()
-    const transaction = {
+    return eventBridge.putEvents({
         Entries: [
-            {
-                EventBusName: 'transactions',
-                Source: 'acme.transactions.xyz',
-                DetailType: 'Transaction events',
-                Detail: JSON.stringify(extractTransaction())
-            }
-
+        {
+            EventBusName: 'transactions',
+            Source: 'acme.transactions',
+            DetailType: 'TransactionEvent',
+            Detail: JSON.stringify(extractTransaction()),
+        },
         ]
-    }
-    console.log('Sending the following:', transaction)
-    const result = await eventBridge.putEvents(transaction).promise()
-    return result
+    }).promise()
+   /*return eventBridge.putEvents({
+        Entries: [
+        {
+            EventBusName: 'marketing',
+            Source: 'acme.newsletter.campaign',
+            DetailType: 'UserSignUp',
+            Detail: `{ "E-Mail": "someone@acme.com" }`,
+        },
+        ]
+    }).promise()*/
 }
 
 const extractTransaction = () => {

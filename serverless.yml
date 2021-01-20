@@ -17,24 +17,32 @@ provider:
 
 functions:
   transactions:
-    handler: handler.transactions
-    memorySize: 128
-    events:
-      - eventBridge:
-          eventBus: transactions
-          pattern:
-            source:
-              - acme.transactions.*
+   handler: handler.transactions
+   events:
+     - eventBridge:
+        eventBus: transactions 
+        pattern:
+           source:
+             - acme.transactions
 
-  xyzTransactions:
-    handler: handler.xyz
-    memorySize: 128
-    events:
-      - eventBridge:
-          eventBus: transactions
-          pattern:
-            source:
-              - acme.transactions.*
+
+  notify:
+   handler: handler.hello
+   events:
+     - eventBridge:
+        eventBus: marketing 
+        pattern:
+           source:
+             - acme.newsletter.campaign
+#   xyzTransactions:
+#     handler: handler.xyz
+#     memorySize: 128
+#     events:
+#       - eventBridge:
+#           eventBus: transactions
+#           pattern:
+#             source:
+#               - acme.transactions.xyz
 
   sendTransaction:
     handler: handler.send
