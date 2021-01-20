@@ -2,11 +2,12 @@ const AWS = require('aws-sdk')
 
 module.exports.sedTransaction = async () => {
     const eventBridge = new AWS.EventBridge()
+    console.log(process.env.TRANSACTION_EVENT_BUS_NAME)
     return eventBridge.putEvents({
         Entries: [
         {
-            EventBusName: 'transactions',
-            Source: 'acme.transactions',
+            EventBusName: process.env.TRANSACTION_EVENT_BUS_NAME,
+            Source: 'acme.transactions.xyz',
             DetailType: 'TransactionEvent',
             Detail: JSON.stringify(extractTransaction()),
         },

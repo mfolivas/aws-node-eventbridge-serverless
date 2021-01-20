@@ -7,6 +7,7 @@ frameworkVersion: '2'
 provider:
   name: aws
   runtime: nodejs12.x
+  stage: dev
 
   iamRoleStatements:
     - Effect: Allow
@@ -14,13 +15,18 @@ provider:
         - events:PutEvents
       Resource: "*"
 
+  environment:
+    TRANSACTION_EVENT_BUS_NAME: transactions-${self:provider.stage}
+
+custom:
+  TRANSACTION_EVENT_BUS_NAME: transactions-${self:provider.stage}
 
 functions:
   transactions:
    handler: handler.transactions
    events:
      - eventBridge:
-        eventBus: transactions 
+        eventBus: ${self:custom.TRANSACTION_EVENT_BUS_NAME}
         pattern:
            source:
              - acme.transactions
@@ -34,15 +40,24 @@ functions:
         pattern:
            source:
              - acme.newsletter.campaign
-#   xyzTransactions:
-#     handler: handler.xyz
-#     memorySize: 128
-#     events:
-#       - eventBridge:
-#           eventBus: transactions
-#           pattern:
-#             source:
-#               - acme.transactions.xyz
+
+
+
+  xyzTransactions:
+   handler: handler.xyz
+   events:
+     - eventBridge:
+        eventBus: ${self:custom.TRANSACTION_EVENT_BUS_NAME}
+        pattern:
+           source:
+             - acme.transactions.xyz
 
   sendTransaction:
     handler: handler.send
+
+resources:
+  Resources:
+    TransactionsEventBus: 
+      Type: AWS::Events::EventBus
+      Properties:
+        Name: ${self:custom.TRANSACTION_EVENT_BUS_NAME}
