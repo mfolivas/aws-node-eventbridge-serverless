@@ -1,8 +1,8 @@
 'use strict';
 const Test = require('./test')
 
-module.exports.transactions = async event => {
-  console.log('All transactions', JSON.stringify(event, null, 2))
+module.exports.abc = async event => {
+  console.log('Transactions for ABC', JSON.stringify(event, null, 2))
   return {
     event
   }
